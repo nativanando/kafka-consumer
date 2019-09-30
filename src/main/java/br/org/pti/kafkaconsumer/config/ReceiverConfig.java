@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -49,7 +50,7 @@ public class ReceiverConfig {
 
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapAddress;
-	
+
 	@Autowired
 	SerieService serieService;
 
@@ -85,29 +86,11 @@ public class ReceiverConfig {
 	 * Assign topics with the pattern sensor_ sufix
 	 * 
 	 * @param message
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	@KafkaListener(topicPattern = "${app.kafka.topic.prefix.expression}", groupId = "receivers")
 	public void listen(String message) throws ParseException {
-		System.out.println("Received Messasge in group foo: " + message);
-		JSONParser parser = new JSONParser();
-		JSONObject messagereceived = (JSONObject) parser.parse(message);
-		sendMessageCassandra(messagereceived);
-	}
-	
-	public void sendMessageCassandra(JSONObject messageReceived) {
-		System.out.println(messageReceived.get("device_id"));
-		
-		UUID uniqueID = UUID.fromString((String) messageReceived.get("device_id"));
-		String dataName = (String) messageReceived.get("data_name");
-		Double temperature = (Double) messageReceived.get("data_value");
-		Date currentTimestamp = new Date();
-		currentTimestamp = new Timestamp(currentTimestamp.getTime());
-		JSONObject message = new JSONObject();
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		Serie serie = new Serie(uniqueID, dataName, currentTimestamp, year, temperature);
-		System.out.println(serie.toString());
-		serieService.save(serie);
+		serieService.save(message);
 	}
 
 }

@@ -38,17 +38,17 @@ public class Serie implements Serializable {
 	private static final long serialVersionUID = 1913186375912584021L;
 	  
 	@PrimaryKeyColumn(name = "device_id", type = PrimaryKeyType.PARTITIONED)
-	private UUID id;
+	private Long id;
 	
 	@PrimaryKeyColumn(name = "data_name", type = PrimaryKeyType.PARTITIONED)
 	private String dataName;
 	
+	@PrimaryKeyColumn(name = "data_release_year", type = PrimaryKeyType.PARTITIONED)
+	private Long dataReleaseYear;
+	
 	@PrimaryKeyColumn(name = "data_release_date", type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
 	@CassandraType(type = Name.TIMESTAMP)
 	Date dataReleaseDate;
-	
-	@Column("data_release_year")
-	private int dataReleaseYear;
 	
 	@Column("data_value")
 	private Double dataValue;
