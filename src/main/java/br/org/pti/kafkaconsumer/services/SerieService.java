@@ -10,6 +10,8 @@ import java.util.UUID;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ public class SerieService {
 
 	@Autowired
 	SerieRepository serieRepository;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(SerieService.class);
 
 	/**
 	 * @param message
@@ -43,6 +47,7 @@ public class SerieService {
 		Serie serie = new Serie(uniqueID, dataName, year, currentTimestamp, temperature);
 
 		serieRepository.save(serie);
+		LOG.info(serie.toString());
 	}
 
 }
