@@ -3,11 +3,13 @@ version: '2'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: lasse-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
   kafka:
     image: confluentinc/cp-kafka:latest
+    container_name: lasse-kafka-node
     depends_on:
       - zookeeper
     ports:
@@ -23,15 +25,28 @@ services:
       KAFKA_NUM_PARTITIONS: 3
   cassandra:
     image: cassandra:latest
+    container_name: lasse-cassandra-db
     depends_on:
       - kafka
     ports:
       - '7000:7000'
       - '9042:9042'
+      - '9160:9160' 
     environment: 
       CASSANDRA_BROADCAST_ADDRESS: cassandra
-      CASSANDRA_RPC_ADDRESS: cassandra
-      CASSANDRA_LISTEN_ADDRESS: cassandra
       CASSANDRA_SEEDS: cassandra
-      CQLSH_HOST: cassandra
-      CQLSH_POST: 9042
+      CASSANDRA_RPC_ADDRESS: cassandra
+      CASSANDRA_CLUSTER_NAME: cassandra_cluster  
+  cassandra-load-keyspace:
+    container_name: lasse-cassandra-load-keyspace
+    image: cassandra:latest
+    restart: on-failure
+    environment: 
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-load-keyspace
+      CASSANDRA_SEEDS: cassandra
+      CASSANDRA_CLUSTER_NAME: cassandra_cluster
+    depends_on:
+      - cassandra
+    volumes:
+      - ./cassandra_schema.cql:/schema.cql
+    command: /bin/bash -c "echo Trying to connect on Cluster... && cqlsh cassandra -f /schema.cql && echo CONNECTION ESTABLISHED!!"
