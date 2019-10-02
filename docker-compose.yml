@@ -35,7 +35,6 @@ services:
     environment: 
       CASSANDRA_BROADCAST_ADDRESS: cassandra
       CASSANDRA_SEEDS: cassandra
-      CASSANDRA_RPC_ADDRESS: cassandra
       CASSANDRA_CLUSTER_NAME: cassandra_cluster  
   cassandra-load-keyspace:
     container_name: lasse-cassandra-load-keyspace
@@ -66,3 +65,16 @@ services:
       CASSANDRA_SCHEMA_ACTION: CREATE_IF_NOT_EXISTS
       CASSANDRA_SCHEMA_NAME: data
       CASSANDRA_CLUSTER_NAME: cassandra_cluster
+  producer:
+    build:
+      context: ~/eclipse-workspace/kafkaProducer
+      dockerfile: ./Dockerfile
+    image: lasse/producer:0.0.1
+    container_name: lasse-data-producer
+    depends_on:
+      - cassandra
+      - cassandra-load-keyspace
+      - broker
+    restart: on-failure
+    environment:
+      KAFKA_CONNECT_ADDRESS: kafka:29092
