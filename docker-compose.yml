@@ -1,5 +1,5 @@
 ---
-version: '2'
+version: '2.2'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -10,6 +10,10 @@ services:
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: lasse-kafka-node
+    cpu_count: 2
+    cpu_percent: 100
+    cpus: 2
+    mem_limit: 4G
     depends_on:
       - zookeeper
     ports:
@@ -26,6 +30,10 @@ services:
   cassandra:
     image: cassandra:latest
     container_name: lasse-cassandra-db
+    cpu_count: 3
+    cpu_percent: 100
+    cpus: 2
+    mem_limit: 8G
     depends_on:
       - kafka
     ports:
@@ -35,7 +43,7 @@ services:
     environment: 
       CASSANDRA_BROADCAST_ADDRESS: cassandra
       CASSANDRA_SEEDS: cassandra
-      CASSANDRA_CLUSTER_NAME: cassandra_cluster  
+      CASSANDRA_CLUSTER_NAME: cassandra_cluster
   cassandra-load-keyspace:
     container_name: lasse-cassandra-load-keyspace
     image: cassandra:latest
