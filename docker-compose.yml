@@ -30,10 +30,9 @@ services:
   cassandra:
     image: cassandra:latest
     container_name: lasse-cassandra-db
-    cpu_count: 3
+    cpu_count: 2
     cpu_percent: 100
     cpus: 2
-    mem_limit: 8G
     depends_on:
       - kafka
     ports:
@@ -44,6 +43,8 @@ services:
       CASSANDRA_BROADCAST_ADDRESS: cassandra
       CASSANDRA_SEEDS: cassandra
       CASSANDRA_CLUSTER_NAME: cassandra_cluster
+      MAX_HEAP_SIZE: "8G"
+      HEAP_NEWSIZE: "400M"
   cassandra-load-keyspace:
     container_name: lasse-cassandra-load-keyspace
     image: cassandra:latest
