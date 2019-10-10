@@ -36,6 +36,8 @@ services:
     cpus: 2
     mem_limit: 4G
     restart: on-failure
+    ports:
+      - '9092:9092'
     depends_on:
       - zookeeper1
       - zookeeper2
@@ -58,6 +60,8 @@ services:
     cpus: 2
     mem_limit: 4G
     restart: on-failure
+    ports:
+      - '9093:9093'
     depends_on:
       - zookeeper1
       - zookeeper2
@@ -80,6 +84,8 @@ services:
     cpus: 2
     mem_limit: 4G
     restart: on-failure
+    ports:
+      - '9094:9094'
     depends_on:
       - zookeeper1
       - zookeeper2
@@ -188,17 +194,19 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: http://registry:8081
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://registry:8081
       CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_LOG4J_ROOT_LOGLEVEL: DEBUG
       CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
-      CONNECT_PLUGIN_PATH: '/usr/share/java,/etc/kafka-connect/jars'
+      CONNECT_PLUGIN_PATH: /etc/jars
     volumes:
-      - ./jars:/etc/kafka-connect/jars
+      - ./cassandra-sink/:/etc/jars/
     logging:
       driver: json-file
       options:

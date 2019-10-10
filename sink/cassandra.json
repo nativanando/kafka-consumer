@@ -1,0 +1,28 @@
+{
+  "name" : "cassandraSinkConnector1",
+  "config" : {
+    "connector.class" : "com.datamountaineer.streamreactor.connect.cassandra.sink.CassandraSinkConnector",
+    "tasks.max" : "1",
+    "topics" : "sensor_all",
+    "connect.cassandra.contact.points" : "cassandra",
+    "connect.cassandra.key.space" : "time_series_raw_data",
+    "connect.cassandra.kcql": "INSERT INTO data SELECT * FROM sensor_all",
+    "connect.cassandra.port": "9042"
+  }
+}
+
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d @cassandra.json http://179.106.238.45:8083/connectors
+
+curl -X PUT \
+  /api/kafka-connect-1/connectors/cassandraSinkConnector1/config \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -d '{
+  "connector.class": "com.datamountaineer.streamreactor.connect.cassandra.sink.CassandraSinkConnector",
+  "connect.cassandra.key.space": "time_series_raw_data",
+  "connect.cassandra.contact.points": "cassandra",
+  "tasks.max": "1",
+  "topics": "sensor_all",
+  "connect.cassandra.kcql": "INSERT INTO data SELECT * FROM sensor_all",
+  "connect.cassandra.port": "9042"
+}'
